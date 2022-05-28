@@ -3,6 +3,23 @@ variable "bucket_name" {
   type        = string
 }
 
+variable "force_destroy" {
+  description = "Whether to empty bucket before attempting destroy"
+  type        = bool
+  default     = false
+}
+
+variable "with_version" {
+  description = "Enables versioning presets with lifecycle rules"
+  type        = bool
+  default     = false
+}
+
+variable "bucket_acl" {
+  description = "The bucket's ACL"
+  type        = string
+  default     = "private"
+}
 
 variable "with_logs" {
   description = "Whether the bucket will ouput logs, requires 'logs_bucket_id'."
