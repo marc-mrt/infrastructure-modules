@@ -53,19 +53,11 @@ resource "aws_s3_bucket_lifecycle_configuration" "bucket_lifecycle" {
 # -----------------------------------------------------------------------------------------
 # ----------------------------------------- LOGS ------------------------------------------
 # -----------------------------------------------------------------------------------------
-resource "aws_s3_bucket" "bucket_logs" {
-  bucket        = "${var.bucket_name}-logs"
-  force_destroy = true
-}
-
-resource "aws_s3_bucket_acl" "bucket_logs_acl" {
-  bucket = aws_s3_bucket.bucket_logs.id
-  acl    = "log-delivery-write"
-}
-
 resource "aws_s3_bucket_logging" "bucket" {
+  count = var.with_logs ? 1 : 0
+
   bucket = aws_s3_bucket.bucket.id
 
-  target_bucket = aws_s3_bucket.bucket_logs.id
-  target_prefix = "log/"
+  target_bucket = var.logs_bucket_id
+  target_prefix = "bucket-${var.bucket_name}/"
 }
