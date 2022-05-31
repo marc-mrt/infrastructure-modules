@@ -34,30 +34,6 @@ resource "aws_key_pair" "syncthing" {
   public_key = var.ssh_public_key
 }
 
-# ---------------------------------------------------------------------------------------------
-# ----------------------------------------- VOLUMES -------------------------------------------
-# ---------------------------------------------------------------------------------------------
-resource "aws_ebs_volume" "syncthing" {
-  availability_zone = var.aws_availability_zone
-  encrypted         = true
-  size              = var.volume_size
-}
-
-resource "aws_ebs_snapshot" "syncthing" {
-  volume_id    = aws_ebs_volume.syncthing.id
-  storage_tier = var.aws_snapshot_storage_tier
-}
-
-resource "aws_volume_attachment" "syncthing" {
-  device_name = var.volume_name
-  volume_id   = aws_ebs_volume.syncthing.id
-  instance_id = aws_instance.syncthing.id
-
-  force_detach                   = false
-  skip_destroy                   = false
-  stop_instance_before_detaching = true
-}
-
 resource "aws_iam_role" "syncthing" {
   name = var.domain
   assume_role_policy = jsonencode({

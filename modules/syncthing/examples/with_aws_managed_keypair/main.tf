@@ -22,8 +22,7 @@ module "syncthing" {
   environment = "example"
   owner       = "GitHub"
 
-  domain      = "syncthing.example.com"
-  volume_name = "/dev/sdh"
+  domain = "syncthing.example.com"
 
   aws_region                = "eu-central-1"
   aws_instance_type         = "t2.nano"
@@ -49,7 +48,7 @@ module "syncthing" {
     },
     {
       name : "syncthing/defaults/folder/path",
-      value : "/dev/sdh",
+      value : "/var/syncthing/",
     }
   ]
 }

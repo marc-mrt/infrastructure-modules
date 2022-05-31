@@ -68,11 +68,6 @@ variable "volume_size" {
   default     = 10
 }
 
-variable "volume_name" {
-  description = "EC2's volume name attached to the instance"
-  type        = string
-}
-
 variable "instance_parameters" {
   description = "EC2's instance parameters, accessible via ssm"
   type = set(object({
