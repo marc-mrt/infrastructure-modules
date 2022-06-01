@@ -3,16 +3,25 @@
 # ------------------------------------------------------------------------------------
 locals {
   website_bucket_name = var.domain_name
-  logs_bucket_name    = "${var.domain_name}-logs"
 }
 
-module "logs_bucket" {
+module "website_logs_bucket" {
   source = "../aws_s3_bucket"
 
   with_version  = false
   force_destroy = true
 
-  bucket_name = local.logs_bucket_name
+  bucket_name = "${var.domain_name}-logs"
+  bucket_acl  = "log-delivery-write"
+}
+
+module "cloudfront_logs_bucket" {
+  source = "../aws_s3_bucket"
+
+  with_version  = false
+  force_destroy = true
+
+  bucket_name = "${var.domain_name}-cloudfront-logs"
   bucket_acl  = "log-delivery-write"
 }
 
@@ -26,7 +35,7 @@ module "website_bucket" {
   bucket_acl  = "public-read"
 
   with_logs      = true
-  logs_bucket_id = module.logs_bucket.id
+  logs_bucket_id = module.website_logs_bucket.id
 }
 
 resource "aws_s3_bucket_website_configuration" "website_config" {
@@ -131,7 +140,7 @@ resource "aws_cloudfront_distribution" "website_distribution" {
 
   logging_config {
     include_cookies = false
-    bucket          = module.logs_bucket.regional_domain_name
-    prefix          = "cloudfront-${local.website_bucket_name}/"
+    bucket          = module.cloudfront_logs_bucket.regional_domain_name
+    prefix          = "log/"
   }
 }
