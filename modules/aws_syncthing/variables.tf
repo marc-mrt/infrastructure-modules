@@ -44,21 +44,17 @@ variable "owner" {
 # -------------------------------------------------------------------------------------------
 # ------------------------------------------ SSH --------------------------------------------
 # -------------------------------------------------------------------------------------------
-variable "ssh_cdir_blocks" {
-  description = "The IPv4 cdir block to ingress the instance via SSH"
-  type        = list(string)
-}
-
-variable "ssh_public_key" {
-  description = "A public SSH key to be used to connect to EC2 instances"
+variable "ssh_key_name" {
+  description = "The SSH keyname to be associated to the EC2 instance"
   type        = string
+  default     = ""
 }
 
 # ----------------------------------------------------------------------------------------------
 # ---------------------------------------- SYNCTHING -------------------------------------------
 # ----------------------------------------------------------------------------------------------
 variable "domain" {
-  description = "The domain used for all deployed infrastructure"
+  description = "The domain used for all deployed infrastructure (will be used to name some components)"
   type        = string
 }
 
@@ -78,5 +74,18 @@ variable "instance_parameters" {
 
 variable "secrets_path" {
   description = "SSM's path to use to store secrets to be accessible in the EC2 instance"
+  type        = string
+}
+
+# ----------------------------------------------------------------------------------------------
+# ---------------------------------------- NETWORKING ------------------------------------------
+# ----------------------------------------------------------------------------------------------
+variable "security_group_id" {
+  description = "The security group ID to apply the necessary inbound/outbound rules"
+  type        = string
+}
+
+variable "subnet_id" {
+  description = "The subnet ID for the instance"
   type        = string
 }

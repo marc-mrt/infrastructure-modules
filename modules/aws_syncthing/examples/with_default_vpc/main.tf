@@ -1,18 +1,21 @@
-data "http" "host_ip" {
-  url = "http://ipv4.icanhazip.com"
+resource "aws_default_vpc" "default" {
 }
 
-locals {
-  host_cdir_blocks = ["${chomp(data.http.host_ip.body)}/32"]
+resource "aws_default_subnet" "default" {
+  availability_zone = "eu-central-1a"
 }
 
-resource "tls_private_key" "example" {
-  algorithm = "RSA"
-  rsa_bits  = 4096
-}
+resource "aws_security_group" "default" {
+  vpc_id = aws_default_vpc.default.id
 
-resource "aws_key_pair" "generated_key" {
-  public_key = tls_private_key.example.public_key_openssh
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    description      = "Allow all outbound"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
 }
 
 module "syncthing" {
@@ -28,9 +31,6 @@ module "syncthing" {
   aws_instance_type         = "t2.nano"
   aws_availability_zone     = "eu-central-1a"
   aws_snapshot_storage_tier = "archive"
-
-  ssh_cdir_blocks = []
-  ssh_public_key  = aws_key_pair.generated_key.public_key
 
   secrets_path = "example/example"
   instance_parameters = [
@@ -51,4 +51,7 @@ module "syncthing" {
       value : "/var/syncthing/",
     }
   ]
+
+  security_group_id = aws_security_group.default.id
+  subnet_id         = aws_default_subnet.default.id
 }
