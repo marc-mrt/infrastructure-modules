@@ -27,10 +27,9 @@ module "syncthing" {
 
   domain = "syncthing.example.com"
 
-  aws_region                = "eu-central-1"
-  aws_instance_type         = "t2.nano"
-  aws_availability_zone     = "eu-central-1a"
-  aws_snapshot_storage_tier = "archive"
+  aws_region            = "eu-central-1"
+  aws_instance_type     = "t2.nano"
+  aws_availability_zone = "eu-central-1a"
 
   secrets_path = "example/example"
   instance_parameters = [

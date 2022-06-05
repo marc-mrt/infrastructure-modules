@@ -27,9 +27,8 @@ module "miniflux" {
 
   domain = "miniflux.example.com"
 
-  aws_region                = "eu-central-1"
-  aws_availability_zone     = "eu-central-1a"
-  aws_snapshot_storage_tier = "archive"
+  aws_region            = "eu-central-1"
+  aws_availability_zone = "eu-central-1a"
 
   username = "admin"
   password = "test12345"

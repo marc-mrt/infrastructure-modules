@@ -11,12 +11,6 @@ variable "aws_availability_zone" {
   type        = string
 }
 
-variable "aws_snapshot_storage_tier" {
-  description = "The storage sier for the EC2 instance's volume"
-  type        = string
-  default     = "archive"
-}
-
 variable "aws_instance_type" {
   description = "The AWS EC2 instance type"
   type        = string
