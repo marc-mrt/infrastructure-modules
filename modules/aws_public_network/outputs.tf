@@ -9,6 +9,6 @@ output "subnet_id" {
 }
 
 output "security_group_id" {
-  value       = aws_security_group_rule.main.id
+  value       = aws_security_group.main.id
   description = "The VPS's security group ID"
 }
