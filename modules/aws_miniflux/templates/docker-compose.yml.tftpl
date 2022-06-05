@@ -1,0 +1,31 @@
+version: "3.4"
+
+services:
+  miniflux:
+    image: miniflux/miniflux:latest
+    healthcheck:
+      test: ["CMD", "/usr/bin/miniflux", "-healthcheck", "auto"]
+    ports:
+      - "80:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=postgres://${db_user}:${db_pw}@db/${db_name}?sslmode=disable
+      - RUN_MIGRATIONS=1
+      - CREATE_ADMIN=1
+      - ADMIN_USERNAME=${admin_user}
+      - ADMIN_PASSWORD=${admin_pw}
+
+  db:
+    image: postgres:14-alpine
+    environment:
+      - POSTGRES_DB=${db_name}
+      - POSTGRES_USER=${db_user}
+      - POSTGRES_PASSWORD=${db_pw}
+    volumes:
+      - ${db_volume}:/var/lib/postgresql/data:z
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${db_user}", "-d", "${db_name}"]
+      interval: 10s
+      start_period: 30s
