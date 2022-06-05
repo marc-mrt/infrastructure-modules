@@ -1,4 +1,6 @@
-# An example using AWS' KMS for the SSH key.
+# An example using AWS' default VPC & Subnet.
+
+> WARNING: Use this example with caution, it is leverage the "default" variants of the VPC & Subnet resources from terraform.
 
 ## Usage:
 

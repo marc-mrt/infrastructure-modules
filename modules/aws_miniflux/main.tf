@@ -93,17 +93,43 @@ resource "aws_instance" "miniflux" {
 
   key_name = var.ssh_key_name
 
-  subnet_id              = aws_subnet.public.id
-  vpc_security_group_ids = [aws_security_group.miniflux.id]
+  subnet_id              = var.subnet_id
+  vpc_security_group_ids = [var.security_group_id]
 
   metadata_options {
     http_endpoint = "enabled"
     http_tokens   = "optional"
   }
 
-  # Depend on the internet gateway to ensure a successful provisioning. 
-  depends_on = [aws_internet_gateway.miniflux]
-
   # Render ignition config to user_data to ensure miniflux will be up and running.
   user_data = data.ignition_config.miniflux.rendered
+}
+
+# --------------------------------------------------------------------------------------------
+# ---------------------------------------- NETWORK -------------------------------------------
+# --------------------------------------------------------------------------------------------
+resource "aws_security_group_rule" "http" {
+  type = "ingress"
+
+  from_port        = 80
+  to_port          = 80
+  protocol         = "tcp"
+  description      = "HTTP"
+  cidr_blocks      = ["0.0.0.0/0"]
+  ipv6_cidr_blocks = ["::/0"]
+
+  security_group_id = var.security_group_id
+}
+
+resource "aws_security_group_rule" "https" {
+  type = "ingress"
+
+  from_port        = 443
+  to_port          = 443
+  protocol         = "tcp"
+  description      = "HTTPS"
+  cidr_blocks      = ["0.0.0.0/0"]
+  ipv6_cidr_blocks = ["::/0"]
+
+  security_group_id = var.security_group_id
 }

@@ -44,50 +44,55 @@ variable "owner" {
 # -------------------------------------------------------------------------------------------
 # ------------------------------------------ SSH --------------------------------------------
 # -------------------------------------------------------------------------------------------
-variable "ssh_cdir_blocks" {
-  description = "The IPv4 cdir block to ingress the instance via SSH"
-  type        = list(string)
-}
-
 variable "ssh_key_name" {
-  description = "The SSH keyname to be associated to the EC2 isntance"
+  description = "The SSH keyname to be associated to the EC2 instance"
   type        = string
+  default     = ""
 }
 
 # ---------------------------------------------------------------------------------------------
 # ---------------------------------------- MINIFLUX -------------------------------------------
 # ---------------------------------------------------------------------------------------------
 variable "domain" {
-  description = "The domain used for all deployed infrastructure"
+  description = "The domain used for all deployed infrastructure (will be used to name some components)"
   type        = string
 }
 
 variable "username" {
   description = "The miniflux admin username"
   type        = string
-  default     = "admin"
 }
 
 variable "password" {
   description = "The miniflux admin password"
   type        = string
-  default     = "super_password"
 }
 
 variable "db_username" {
   description = "The miniflux's database user username"
   type        = string
-  default     = "admin"
 }
 
 variable "db_password" {
   description = "The miniflux's database user password"
   type        = string
-  default     = "super_password"
 }
 
 variable "volume_size" {
   description = "The volume size"
   type        = number
   default     = 10
+}
+
+# ----------------------------------------------------------------------------------------------
+# ---------------------------------------- NETWORKING ------------------------------------------
+# ----------------------------------------------------------------------------------------------
+variable "security_group_id" {
+  description = "The security group ID to apply the necessary inbound/outbound rules"
+  type        = string
+}
+
+variable "subnet_id" {
+  description = "The subnet ID for the instance"
+  type        = string
 }
