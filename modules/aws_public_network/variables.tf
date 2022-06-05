@@ -35,7 +35,7 @@ variable "owner" {
 variable "vpc_cdir_block" {
   description = "The VPC's cdir block"
   type        = string
-  default     = "10.0.0.0/16"
+  default     = "10.10.0.0/16"
 }
 
 variable "subnet_cdir_block" {
