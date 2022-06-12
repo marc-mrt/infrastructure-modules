@@ -1,12 +1,26 @@
 version: "3.4"
 
 services:
+  caddy:
+    image: caddy:2
+    container_name: caddy
+    depends_on:
+      miniflux:
+        condition: service_healthy  
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ${caddyfile_path}:/etc/caddy/Caddyfile:z
+      - caddy_data:/data
+      - caddy_config:/config
+
   miniflux:
     image: miniflux/miniflux:latest
     healthcheck:
       test: ["CMD", "/usr/bin/miniflux", "-healthcheck", "auto"]
-    ports:
-      - "80:8080"
+    expose:
+      - "8080"
     depends_on:
       db:
         condition: service_healthy
@@ -16,6 +30,7 @@ services:
       - CREATE_ADMIN=1
       - ADMIN_USERNAME=${admin_user}
       - ADMIN_PASSWORD=${admin_pw}
+      - BASE_URL=https://${domain}
 
   db:
     image: postgres:14-alpine
@@ -24,8 +39,12 @@ services:
       - POSTGRES_USER=${db_user}
       - POSTGRES_PASSWORD=${db_pw}
     volumes:
-      - ${db_volume}:/var/lib/postgresql/data:z
+      - ./data:/var/lib/postgresql/data:z
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "${db_user}", "-d", "${db_name}"]
       interval: 10s
       start_period: 30s
+
+volumes:
+  caddy_data:
+  caddy_config:

@@ -8,8 +8,20 @@ locals {
   docker_compose_bin_path = "/usr/local/bin/docker-compose"
 
   miniflux_docker_compose_path = "${local.system_user_homedir}/docker-compose.yml"
+  miniflux_caddyfile_path      = "${local.system_user_homedir}/Caddyfile"
+}
 
-  database_volume_path = "${local.system_user_homedir}/data"
+data "ignition_file" "caddyfile" {
+  path = local.miniflux_caddyfile_path
+
+  content {
+    content = templatefile(
+      "${path.module}/templates/Caddyfile.tftpl",
+      {
+        domain = var.domain,
+      }
+    )
+  }
 }
 
 data "ignition_file" "docker-compose" {
@@ -27,7 +39,8 @@ data "ignition_file" "docker-compose" {
         admin_user = var.username,
         admin_pw   = var.password,
 
-        db_volume = local.database_volume_path
+        domain         = var.domain,
+        caddyfile_path = local.miniflux_caddyfile_path,
       }
     )
   }
@@ -42,9 +55,7 @@ After=install-docker-compose.service
 Requires=install-docker-compose.service
 
 [Service]
-RemainAfterExit=yes
-ExecStartPre=/usr/bin/mkdir -p ${local.database_volume_path}
-ExecStart=${local.docker_compose_bin_path} -f ${local.miniflux_docker_compose_path} up -d --no-recreate
+ExecStart=${local.docker_compose_bin_path} -f ${local.miniflux_docker_compose_path} up
 ExecStop=${local.docker_compose_bin_path} -f ${local.miniflux_docker_compose_path} down
 
 [Install]
@@ -73,6 +84,7 @@ EOT
 
 data "ignition_config" "miniflux" {
   files = [
+    data.ignition_file.caddyfile.rendered,
     data.ignition_file.docker-compose.rendered,
   ]
 
