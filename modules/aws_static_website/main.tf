@@ -1,10 +1,6 @@
 # ------------------------------------------------------------------------------------
 # ----------------------------------------- S3 ---------------------------------------
 # ------------------------------------------------------------------------------------
-locals {
-  website_bucket_name = var.domain_name
-}
-
 module "website_logs_bucket" {
   source = "../aws_s3_bucket"
 
@@ -31,7 +27,7 @@ module "website_bucket" {
   with_version  = true
   force_destroy = false
 
-  bucket_name = local.website_bucket_name
+  bucket_name = var.domain_name
   bucket_acl  = "public-read"
 
   with_logs      = true
@@ -79,7 +75,7 @@ POLICY
 # ----------------------------------------- CLOUDFRONT ---------------------------------------
 # --------------------------------------------------------------------------------------------
 locals {
-  S3_origin = "S3.${local.website_bucket_name}"
+  S3_origin = "S3.${var.domain_name}"
 }
 
 resource "aws_cloudfront_distribution" "website_distribution" {
@@ -101,6 +97,8 @@ resource "aws_cloudfront_distribution" "website_distribution" {
   default_root_object = var.index_document
 
   price_class = var.distribution_priceclass
+
+  aliases = var.acm_certificate ? [var.domain_name] : []
 
   custom_error_response {
     error_caching_min_ttl = 300
@@ -135,7 +133,10 @@ resource "aws_cloudfront_distribution" "website_distribution" {
   }
 
   viewer_certificate {
-    cloudfront_default_certificate = true
+    cloudfront_default_certificate = var.acm_certificate ? false : true
+    acm_certificate_arn            = var.acm_certificate ? var.acm_certificate_arn : null
+    ssl_support_method             = var.acm_certificate ? "sni-only" : null
+    minimum_protocol_version       = var.acm_certificate ? "TLSv1.2_2021" : null
   }
 
   logging_config {

@@ -41,6 +41,18 @@ variable "domain_name" {
   type        = string
 }
 
+variable "acm_certificate_arn" {
+  description = "The certificate arn used for the cloudfront distribution"
+  type        = string
+  default     = ""
+}
+
+variable "acm_certificate" {
+  description = "Whether or not an ACM certificate will be used"
+  type        = bool
+  default     = false
+}
+
 variable "index_document" {
   description = "The index document for the website"
   type        = string
