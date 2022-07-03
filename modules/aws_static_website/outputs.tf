@@ -8,6 +8,11 @@ output "bucket_id" {
   description = "The bucket's ID"
 }
 
+output "cloudfront_distribution_arn" {
+  value       = aws_cloudfront_distribution.website_distribution.arn
+  description = "The CloudFront distribution's ARN"
+}
+
 output "cloudfront_distribution_id" {
   value       = aws_cloudfront_distribution.website_distribution.id
   description = "The CloudFront distribution's ID"
