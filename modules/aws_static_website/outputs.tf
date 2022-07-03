@@ -13,6 +13,11 @@ output "cloudfront_distribution_arn" {
   description = "The CloudFront distribution's ARN"
 }
 
+output "cloudfront_hosted_zone_id" {
+  value       = aws_cloudfront_distribution.website_distribution.hosted_zone_id
+  description = "The CloudFront distribution's Hosted zone ID"
+}
+
 output "cloudfront_distribution_id" {
   value       = aws_cloudfront_distribution.website_distribution.id
   description = "The CloudFront distribution's ID"
